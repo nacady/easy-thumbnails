@@ -460,6 +460,32 @@ class Thumbnailer(File):
         Return a ``ThumbnailFile`` containing an existing thumbnail for a set
         of thumbnail options, or ``None`` if not found.
         """
+        try:
+            # instead of generating thumbnails on cloudinary, use cloudinary transform
+            import cloudinary
+            from cloudinary_storage.storage import MediaCloudinaryStorage
+
+            class CloudinaryThumbnailFile(ThumbnailFile):
+                @property
+                def url(self):
+                    return cloudinary.CloudinaryResource(
+                        self.name,
+                        url_options=dict(
+                            width=thumbnail_options['size'][0],
+                            height=thumbnail_options['size'][1],
+                            crop='fill',
+                            fetch_format='auto',
+                            flags='lossy',
+                            quality='auto')).url
+
+            if isinstance(self.storage, MediaCloudinaryStorage) and isinstance(self.thumbnail_storage, MediaCloudinaryStorage):
+                return CloudinaryThumbnailFile(
+                    name=self.name, storage=self.thumbnail_storage,
+                    thumbnail_options=self.get_options(thumbnail_options))
+        except:
+            return self._get_existing_thumbnail(thumbnail_options, high_resolution)
+
+    def _get_existing_thumbnail(self, thumbnail_options, high_resolution=False):
         thumbnail_options = self.get_options(thumbnail_options)
         names = [self.get_thumbnail_name(thumbnail_options, transparent=False)]
         transparent_name = self.get_thumbnail_name(
