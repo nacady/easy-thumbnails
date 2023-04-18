@@ -455,7 +455,7 @@ class Thumbnailer(File):
 
         return os.path.join(basedir, path, subdir, filename)
 
-    def get_existing_thumbnail(self, thumbnail_options):
+    def get_existing_thumbnail(self, thumbnail_options, high_resolution=False):
         """
         Return a ``ThumbnailFile`` containing an existing thumbnail for a set
         of thumbnail options, or ``None`` if not found.
