@@ -478,7 +478,7 @@ class Thumbnailer(File):
                             flags='lossy',
                             quality='auto')).url
 
-            if isinstance(self.storage, MediaCloudinaryStorage) and isinstance(self.thumbnail_storage, MediaCloudinaryStorage):
+            if isinstance(self.source_storage, MediaCloudinaryStorage) and isinstance(self.thumbnail_storage, MediaCloudinaryStorage):
                 return CloudinaryThumbnailFile(
                     name=self.name, storage=self.thumbnail_storage,
                     thumbnail_options=self.get_options(thumbnail_options))
